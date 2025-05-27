@@ -32,6 +32,9 @@ ${req.body.potential_impact}
 
 ### Timeline & Milestones
 
+${req.body.duration ? `Grant duration: ${req.body.duration}` : ''}
+${req.body.commitment ? `Time commitment: ${req.body.commitment}` : ''}
+
 ${req.body.timelines}
 
 ### Proposed Budget
@@ -47,6 +50,9 @@ ${req.body.what_funding}
 ${req.body.references}
 
 ${req.body.bios ? req.body.bios : 'No prior contributions.'}
+
+**Years of dev experience:**
+${req.body.years_experience ? `${req.body.years_experience}` : '0'}
 
 ### Anything Else
 
@@ -68,14 +74,17 @@ ${
     // Label set according to "main focus"
     const mainFocus = `${req.body.main_focus}`.toLowerCase()
     const issueLabels = [mainFocus]
-    if (mainFocus === 'layer2') {
-      issueLabels.push('bitcoin') // LN & L2 = subset of Bitcoin
+    if (mainFocus === 'layer1' || mainFocus === 'layer2') {
+      issueLabels.push('bitcoin') // L1 & L2 = subset of Bitcoin
     }
 
     // Repo set according to "main focus"
     let appRepo = GH_APP_REPO
     if (mainFocus === 'nostr') {
       appRepo = `${GH_APP_REPO}-nostr`
+    }
+    if (mainFocus === 'layer1') {
+      appRepo = `${GH_APP_REPO}-layer1`
     }
     if (mainFocus === 'layer2') {
       appRepo = `${GH_APP_REPO}-layer2`
@@ -88,10 +97,7 @@ ${
     }
 
     // Tag depending on request for grant and/or request for listing
-    req.body.general_fund && issueLabels.push('grant')
-    req.body.LTS && issueLabels.push('grant') // LTS = subset of grant
     req.body.LTS && issueLabels.push('LTS')
-    req.body.explore_page && issueLabels.push('website')
 
     // Additional tags based on yes/no answers
     req.body.has_received_funding && issueLabels.push('prior funding')

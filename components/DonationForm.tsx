@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { MAX_AMOUNT } from '../config'
 import { fetchPostJSON } from '../utils/api-helpers'
 import Spinner from './Spinner'
 import * as EmailValidator from 'email-validator'
@@ -16,11 +15,13 @@ type DonationStepsProps = {
   projectNamePretty: string
   btcpay: string
   zaprite: string
+  store: string
 }
 const DonationSteps: React.FC<DonationStepsProps> = ({
   projectNamePretty,
   btcpay,
   zaprite,
+  store,
 }) => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -71,6 +72,7 @@ const DonationSteps: React.FC<DonationStepsProps> = ({
       const payload = {
         btcpay,
         zaprite,
+        store,
       }
 
       if (amount) {
