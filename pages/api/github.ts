@@ -30,6 +30,14 @@ ${req.body.short_description}
 
 ${req.body.potential_impact}
 
+### Other Organizations Applied To
+
+${
+  req.body.organizations
+    ? `This application was submitted to: ${req.body.organizations.join(', ')}`
+    : 'No organizations specified'
+}
+
 ### Timeline & Milestones
 
 ${req.body.duration ? `Grant duration: ${req.body.duration}` : ''}
@@ -78,6 +86,11 @@ ${
       issueLabels.push('bitcoin') // L1 & L2 = subset of Bitcoin
     }
 
+    // Add label for applications from common grant app
+    if (req.body.source === 'common-grant-app') {
+      issueLabels.push('common-grant-app')
+    }
+
     // Repo set according to "main focus"
     let appRepo = GH_APP_REPO
     if (mainFocus === 'nostr') {
@@ -94,6 +107,9 @@ ${
     }
     if (mainFocus === 'education') {
       appRepo = `${GH_APP_REPO}-education`
+    }
+    if (mainFocus === 'ecash') {
+      appRepo = `${GH_APP_REPO}-ecash`
     }
 
     // Tag depending on request for grant and/or request for listing

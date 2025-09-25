@@ -1,6 +1,12 @@
-import GrantApplicationForm from '@/components/GrantApplicationForm'
+import dynamic from 'next/dynamic'
 import PageSection from '@/components/PageSection'
 import CustomLink from '@/components/Link'
+import ClosedNotice from '@/components/ClosedNotice'
+
+const GrantApplicationForm = dynamic(
+  () => import('@/components/GrantApplicationForm'),
+  { ssr: false }
+)
 
 export default function Apply() {
   return (
@@ -24,6 +30,7 @@ export default function Apply() {
           <CustomLink href="/apply#criteria">application criteria</CustomLink>{' '}
           before sending in an application.
         </p>
+        <ClosedNotice />
         <GrantApplicationForm />
       </PageSection>
     </>
