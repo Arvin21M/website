@@ -8,6 +8,7 @@ import CustomLink from './Link'
 
 export default function ApplicationForm() {
   const [loading, setLoading] = useState(false)
+  const [formLoadedAt] = useState(() => Date.now())
   const router = useRouter()
   const {
     watch,
@@ -22,11 +23,11 @@ export default function ApplicationForm() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any) => {
     setLoading(true)
-    console.log(data)
+    const submissionData = { ...data, formLoadedAt }
 
     try {
       // Track application in GitHub
-      const res = await fetchPostJSON('/api/github', data)
+      const res = await fetchPostJSON('/api/github', submissionData)
       if (res.message === 'success') {
         console.info('Application tracked') // Succeed silently
       } else {
@@ -39,7 +40,7 @@ export default function ApplicationForm() {
     } finally {
       // Mail application to us
       try {
-        const res = await fetchPostJSON('/api/sendgrid', data)
+        const res = await fetchPostJSON('/api/sendgrid', submissionData)
         if (res.message === 'success') {
           router.push('/submitted')
         } else {
@@ -105,6 +106,16 @@ export default function ApplicationForm() {
           type="text"
           className="mt-1 block w-full rounded-md border-gray-300 text-black shadow-sm focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50"
           {...register('personal_github')}
+        />
+      </label>
+      <label className="offscreen-field block">
+        Organization Website
+        <input
+          type="text"
+          className="mt-1 block w-full rounded-md border-gray-300 text-black shadow-sm focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50"
+          {...register('organization_website')}
+          tabIndex={-1}
+          autoComplete="off"
         />
       </label>
       <label className="block">
@@ -184,8 +195,8 @@ export default function ApplicationForm() {
       </label>
 
       <label className="block">
-        If you receive or plan to receive any other funding, please describe it
-        here:
+        If you receive or plan to receive any other funding, include those
+        details (dates & amounts):
         <input
           type="text"
           className="mt-1 block w-full rounded-md border-gray-300 text-black shadow-sm focus:border-orange-300 focus:ring focus:ring-orange-200 focus:ring-opacity-50"
@@ -264,7 +275,7 @@ export default function ApplicationForm() {
       <FormButton
         variant={isFLOSS ? 'enabled' : 'disabled'}
         type="submit"
-        disabled={true || loading}
+        disabled={loading}
       >
         Submit LTS Application
       </FormButton>
